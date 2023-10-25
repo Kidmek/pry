@@ -53,6 +53,9 @@ function App() {
       let operation: string = ''
       try {
         chosen.forEach((category, index) => {
+          if (index == chosen.length) {
+            return
+          }
           if (index == 0) {
             total += category.value
           } else {
@@ -78,14 +81,11 @@ function App() {
               case '%':
                 total %= category.value
                 break
-              case '':
-                break
               default:
                 next = false
             }
           }
           operation = inputs[index + 1]
-
           if (!next) {
             throw new Error('Invalid')
           }
