@@ -1,0 +1,50 @@
+.singleInput {
+  position: relative;
+  padding: 0;
+}
+.list {
+  position: absolute;
+  background-color: white;
+  z-index: 1000;
+  height: 20rem;
+  overflow-y: scroll;
+}
+.option {
+  cursor: pointer;
+}
+
+.container {
+  display: flex;
+}
+.chosen {
+  display: flex;
+  background-color: rgb(181, 181, 181);
+  padding: 0.2rem;
+  margin-right: 0.1rem;
+}
+.chosen input {
+  background-color: rgb(181, 181, 181);
+  margin: 0rem 0.1rem;
+}
+.insideInput {
+  padding: 0;
+}
+
+.container.main {
+  border-width: 1px;
+  border-color: black;
+  border-style: solid;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+input {
+  border: 0;
+  outline: none;
+}
+
+.divider {
+  width: 2px;
+  height: 100%;
+  margin: 0rem 0.3rem;
+  background-color: gray;
+}
