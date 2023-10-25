@@ -8,15 +8,24 @@ function App() {
   const [inputs, setInputs] = useState<string[]>([''])
   const [chosen, setChosen] = useState<CategoryType[]>([])
   const [insideInput, setInsideInput] = useState<string[]>(['x'])
-  const [focused, setFocused] = useState(0)
+  const [focused, setFocused] = useState<number>(0)
+  const [total, setTotal] = useState<number>(0)
+  const [valid, setValid] = useState<boolean>(true)
 
   const { data: categories } = useQuery<CategoryType>(
     [
       'categories',
       {
         query:
-          inputs[focused] && operations.includes(inputs[focused].charAt(0))
+          inputs[focused] &&
+          inputs[focused].length &&
+          operations.includes(inputs[focused].charAt(0)) &&
+          (inputs[focused].length <= 2 ||
+            !operations.includes(inputs[focused].charAt(1)))
             ? inputs[focused].substring(1, inputs[focused].length)
+            : inputs[focused].length > 1 &&
+              operations.includes(inputs[focused].substring(0, 2))
+            ? inputs[focused].substring(2, inputs[focused].length)
             : inputs[focused],
       },
     ],
@@ -30,8 +39,55 @@ function App() {
   )
 
   useEffect(() => {
-    console.log(categories)
-  }, [categories])
+    if (inputs[0].length > 0) {
+      setValid(false)
+    } else {
+      let total: number = 0
+      let next: boolean = true
+      let operation: string = ''
+      try {
+        chosen.forEach((category, index) => {
+          if (index == 0) {
+            total += category.value
+            operation = inputs[index + 1]
+          } else {
+            switch (operation) {
+              case '+':
+                total += category.value
+                break
+              case '-':
+                total -= category.value
+                break
+              case '*':
+                total *= category.value
+                break
+              case '**':
+                total **= category.value
+                break
+              case '^':
+                total ^= category.value
+                break
+              case '/':
+                total /= category.value
+                break
+              case '%':
+                total %= category.value
+                break
+              default:
+                next = false
+            }
+          }
+          if (!next) {
+            throw new Error('Invalid')
+          }
+        })
+        setValid(true)
+        setTotal(total)
+      } catch (invalid) {
+        setValid(false)
+      }
+    }
+  }, [chosen, inputs])
 
   return (
     <div>
@@ -137,7 +193,18 @@ function App() {
                           const prevInInput = insideInput
                           const firstChar = prevInputs[mainIndex + 1].charAt(0)
                           if (operations.includes(firstChar)) {
-                            prevInputs[mainIndex + 1] = firstChar
+                            if (
+                              prevInputs[mainIndex + 1].length > 1 &&
+                              operations.includes(
+                                prevInputs[mainIndex + 1].substring(0, 2)
+                              )
+                            ) {
+                              prevInputs[mainIndex + 1] = prevInputs[
+                                mainIndex + 1
+                              ].substring(0, 2)
+                            } else {
+                              prevInputs[mainIndex + 1] = firstChar
+                            }
                           } else {
                             prevInputs[mainIndex + 1] = ''
                           }
@@ -155,6 +222,7 @@ function App() {
           </div>
         ))}
       </div>
+      {valid ? <div>Total : {total}</div> : <div>Syntax Error</div>}
     </div>
   )
 }
