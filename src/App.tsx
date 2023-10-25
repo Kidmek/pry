@@ -62,9 +62,11 @@ function App() {
                     className='option'
                     onClick={() => {
                       const prevInput = inputs
+                      const prevInInput = insideInput
                       prevInput[0] = ''
                       setChosen([...chosen, category])
                       setInputs(['', ...prevInput])
+                      setInsideInput(['', ...prevInInput])
                     }}
                   >
                     {category.category}
@@ -82,8 +84,8 @@ function App() {
               <span>{'['}</span>
               <input
                 className='insideInput'
-                style={{ width: `${insideInput.length + 0.2}ch ` }}
-                value={insideInput}
+                style={{ width: `${insideInput[mainIndex].length + 0.2}ch ` }}
+                value={insideInput[mainIndex]}
                 onChange={(e) => {
                   const prevInInput = insideInput
                   prevInInput[mainIndex] = e.target.value
@@ -105,10 +107,13 @@ function App() {
                   ) {
                     const prevInputs = inputs
                     const prevChosen = chosen
+                    const prevInInput = insideInput
                     prevInputs.splice(mainIndex + 1, 1)
                     prevChosen.splice(mainIndex, 1)
+                    prevInInput.splice(mainIndex, 1)
                     setChosen([...prevChosen])
                     setInputs([...prevInputs])
+                    setInsideInput([...prevInInput])
                   }
                 }}
                 value={inputs[mainIndex + 1]}
