@@ -7,11 +7,19 @@ import { CategoryType, fetchCategories } from './api/suggestions'
 function App() {
   const [inputs, setInputs] = useState<string[]>([''])
   const [chosen, setChosen] = useState<CategoryType[]>([])
-  const [insideInput, setInsideInput] = useState<string>('')
+  const [insideInput, setInsideInput] = useState<string[]>([''])
   const [focused, setFocused] = useState(0)
 
   const { data: categories } = useQuery<CategoryType>(
-    ['categories', { query: inputs[focused] }],
+    [
+      'categories',
+      {
+        query:
+          inputs[focused] && operations.includes(inputs[focused].charAt(0))
+            ? inputs[focused].substring(1, inputs[focused].length)
+            : inputs[focused],
+      },
+    ],
     fetchCategories,
     {
       // only fetch search terms longer than 2 characters
@@ -35,6 +43,7 @@ function App() {
             style={{
               width: `${inputs.length > 1 ? inputs[0].length + 1 : 100}ch `,
             }}
+            onFocus={() => setFocused(0)}
             value={inputs[0]}
             onChange={(e) => {
               const prevInput = inputs
@@ -75,7 +84,11 @@ function App() {
                 className='insideInput'
                 style={{ width: `${insideInput.length + 0.2}ch ` }}
                 value={insideInput}
-                onChange={(e) => setInsideInput(e.target.value)}
+                onChange={(e) => {
+                  const prevInInput = insideInput
+                  prevInInput[mainIndex] = e.target.value
+                  setInsideInput([...prevInInput])
+                }}
               />
               <span>{']'}</span>
             </div>
@@ -84,6 +97,7 @@ function App() {
               <input
                 className='singleInput'
                 style={{ width: `${inputs[mainIndex + 1].length + 1}ch ` }}
+                onFocus={() => setFocused(mainIndex + 1)}
                 onKeyDown={(e) => {
                   if (
                     e.key == 'Backspace' &&
