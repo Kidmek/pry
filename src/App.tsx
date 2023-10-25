@@ -54,7 +54,6 @@ function App() {
       try {
         chosen.forEach((category, index) => {
           if (index == 0) {
-            operation = inputs[index + 1]
             total += category.value
           } else {
             switch (operation) {
@@ -79,10 +78,14 @@ function App() {
               case '%':
                 total %= category.value
                 break
+              case '':
+                break
               default:
                 next = false
             }
           }
+          operation = inputs[index + 1]
+
           if (!next) {
             throw new Error('Invalid')
           }
