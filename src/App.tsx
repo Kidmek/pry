@@ -3,10 +3,13 @@ import './App.css'
 import { operations } from './constants'
 import { useQuery } from 'react-query'
 import { CategoryType, fetchCategories } from './api/suggestions'
+import { useStore } from './store/useStore'
 
 function App() {
   const [inputs, setInputs] = useState<string[]>([''])
-  const [chosen, setChosen] = useState<CategoryType[]>([])
+
+  // Zustand
+  const { chosen, setChosen } = useStore()
   const [insideInput, setInsideInput] = useState<string[]>(['x'])
   const [focused, setFocused] = useState<number>(0)
   const [total, setTotal] = useState<number>(0)
@@ -23,12 +26,15 @@ function App() {
           (inputs[focused].length <= 2 ||
             !operations.includes(inputs[focused].charAt(1)))
             ? inputs[focused].substring(1, inputs[focused].length)
-            : inputs[focused].length > 1 &&
+            : inputs[focused] &&
+              inputs[focused].length &&
+              inputs[focused].length > 1 &&
               operations.includes(inputs[focused].substring(0, 2))
             ? inputs[focused].substring(2, inputs[focused].length)
             : inputs[focused],
       },
     ],
+    // @ts-ignore
     fetchCategories,
     {
       // only fetch search terms longer than 2 characters
@@ -48,8 +54,8 @@ function App() {
       try {
         chosen.forEach((category, index) => {
           if (index == 0) {
-            total += category.value
             operation = inputs[index + 1]
+            total += category.value
           } else {
             switch (operation) {
               case '+':
