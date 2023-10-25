@@ -7,7 +7,7 @@ import { CategoryType, fetchCategories } from './api/suggestions'
 function App() {
   const [inputs, setInputs] = useState<string[]>([''])
   const [chosen, setChosen] = useState<CategoryType[]>([])
-  const [insideInput, setInsideInput] = useState<string[]>([''])
+  const [insideInput, setInsideInput] = useState<string[]>(['x'])
   const [focused, setFocused] = useState(0)
 
   const { data: categories } = useQuery<CategoryType>(
@@ -66,7 +66,7 @@ function App() {
                       prevInput[0] = ''
                       setChosen([...chosen, category])
                       setInputs(['', ...prevInput])
-                      setInsideInput(['', ...prevInInput])
+                      setInsideInput(['x', ...prevInInput])
                     }}
                   >
                     {category.category}
@@ -134,6 +134,7 @@ function App() {
                         className='option'
                         onClick={() => {
                           const prevInputs = inputs
+                          const prevInInput = insideInput
                           const firstChar = prevInputs[mainIndex + 1].charAt(0)
                           if (operations.includes(firstChar)) {
                             prevInputs[mainIndex + 1] = firstChar
@@ -142,6 +143,7 @@ function App() {
                           }
                           setChosen([...chosen, category])
                           setInputs([...prevInputs, ''])
+                          setInsideInput([...prevInInput, 'x'])
                         }}
                       >
                         {category.category}
